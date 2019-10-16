@@ -70,8 +70,7 @@ class ReplyAgentsSupervisor
     {
         $chat_id = $update->message->chat->id;
 
-        $userState = 'start';
-//        $userState = User::where(['chat_id' => $chat_id])->value('state');
+        $userState = User::where(['chat_id' => $chat_id])->value('state');
         if ($userState && isset($this->agents[$agentName = $userState])) {
             $agent = $this->agents[$agentName];
             $agent->setUpdate($update);

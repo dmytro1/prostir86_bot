@@ -117,12 +117,20 @@ return [
 
     'replyAgents' => [
         App\Telegram\ReplyAgents\MainReplyAgent::class,
+        App\Telegram\ReplyAgents\NameReplyAgent::class,
+        App\Telegram\ReplyAgents\SurnameReplyAgent::class,
+        App\Telegram\ReplyAgents\EmailReplyAgent::class,
     ],
 
     'callbackCommands' => [
     ],
 
     'states' => [
+        'startState' => 'start',
+        'nameState' => 'name',
+        'surnameState' => 'surname',
+        'emailState' => 'email',
+        'paymentState' => 'payment',
     ],
 
     /*

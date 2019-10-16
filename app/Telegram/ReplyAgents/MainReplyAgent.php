@@ -12,6 +12,8 @@ namespace App\Telegram\ReplyAgents;
 //use App\Telegram\ReplyAgents\Main\ShopReply;
 //use App\Telegram\ReplyAgents\Main\UsersList;
 
+use App\User;
+
 class MainReplyAgent extends AbstractReplyAgent
 {
     protected $name = 'start';
@@ -20,11 +22,17 @@ class MainReplyAgent extends AbstractReplyAgent
     {
         $message = $this->message;
 
-        $this->replyWithMessage([
-            'text' => 'main reply',
-        ]);
+        if (strpos($message, __('telegram.events.event1')) === 0) {
 
-//        if (strpos($message, __('telegram.start_keyboard.settings')) === 0) {
+            $state = config('telegram.states.nameState');
+
+            /** update state in User model */
+            User::where('chat_id', $this->chat_id)->where('state', '!=', $state)->update(['state' => $state]);
+
+            $this->replyWithMessage([
+                'text' => __('telegram.start2'),
+            ]);
+        }
 //            $reply = new SettingsReply($this->telegram);
 //        } elseif (strpos($message, __('telegram.start_keyboard.inline')) === 0) {
 //            $reply = new InlineReply($this->telegram);

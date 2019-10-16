@@ -47,18 +47,17 @@ class StartCommand extends Command
             'state' => config('telegram.states.startState', 'start'),
         ];
 
-//        $new_user = User::updateOrCreate(['chat_id' => $this->chat_id], $data);
+        $new_user = User::updateOrCreate(['chat_id' => $this->chat_id], $data);
 
-//        $response = json_encode($new_user);
+        $response = json_encode($new_user);
 
-//        $text = __('telegram.start', ['firstName' => $this->first_name]);
+        $text = __('telegram.start', ['firstName' => $this->first_name]);
 
-//        $is_admin = $this->chat_id == 76852895 ? true : false;
+        $is_admin = $this->chat_id == 76852895 ? true : false;
 
         $this->replyWithMessage([
-            'text' => 'test test',
-//            'text' => $text,
-//            'reply_markup' => $this->prepare_start_keyboard($is_admin),
+            'text' => $text,
+            'reply_markup' => $this->prepare_start_keyboard($is_admin),
         ]);
     }
 
@@ -71,41 +70,16 @@ class StartCommand extends Command
     {
         $keyboard = Keyboard::make(['resize_keyboard' => true]);
 
-        $shop = Keyboard::button([
-            'text' => __('telegram.start_keyboard.shop'),
-        ]);
-        $invoice = Keyboard::button([
-            'text' => __('telegram.start_keyboard.invoice'),
-        ]);
-        $inline = Keyboard::button([
-            'text' => __('telegram.start_keyboard.inline'),
-        ]);
-        $location = Keyboard::button([
-            'text' => __('telegram.start_keyboard.location'),
-        ]);
-        $instant = Keyboard::button([
-            'text' => __('telegram.start_keyboard.instant'),
-        ]);
-        $login = Keyboard::button([
-            'text' => __('telegram.start_keyboard.login'),
-        ]);
-        $settings = Keyboard::button([
-            'text' => __('telegram.start_keyboard.settings'),
-        ]);
-        $contact = Keyboard::button([
-            'text' => __('telegram.start_keyboard.contact'),
-        ]);
-        $users_list = Keyboard::button([
-            'text' => __('telegram.start_keyboard.users_list'),
+        $event1 = Keyboard::button([
+            'text' => __('telegram.events.event1'),
         ]);
 
-        $keyboard->row($shop, $invoice);
-        $keyboard->row($inline, $location);
-        $keyboard->row($instant, $login);
-        $keyboard->row($settings, $contact);
-        if ($super_admin) {
-            $keyboard->row($users_list);
-        }
+        $event2 = Keyboard::button([
+            'text' => __('telegram.events.event2'),
+        ]);
+
+        $keyboard->row($event1);
+        $keyboard->row($event2);
 
         return $keyboard;
     }

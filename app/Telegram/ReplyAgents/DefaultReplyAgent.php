@@ -14,8 +14,7 @@ class DefaultReplyAgent extends AbstractReplyAgent
         $message = $this->message;
 
         $locale = app()->getLocale();
-//        $state = User::where(['chat_id' => $chat_id])->value('state');
-        $state = 'start';
+        $state = User::where(['chat_id' => $chat_id])->value('state');
 
         $command = 'Command: <b>"' . $message . '"</b> not found';
         $default = 'This is default message';
