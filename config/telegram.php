@@ -11,7 +11,7 @@ return [
     | bots at once using the manager class.
     |
     */
-    'default' => 'common',
+//    'default' => 'common',
 
     /*
     |--------------------------------------------------------------------------
@@ -38,20 +38,21 @@ return [
     |               Acme\Project\Commands\BotFather\ByeCommand::class,
     |             ]
     */
-    'bots' => [
-        'common' => [
-            'username'  => 'MyTelegramBot',
-            'token' => env('TELEGRAM_BOT_TOKEN', 'YOUR-BOT-TOKEN'),
-            'commands' => [
-                App\Commands\StartCommand::class
-            ],
-        ],
+//    'bots' => [
+//        'common' => [
+//            'username'  => 'MyTelegramBot',
+//            'token' => env('TELEGRAM_BOT_TOKEN', 'YOUR-BOT-TOKEN'),
+//            'commands' => [
+//                App\Commands\StartCommand::class
+//            ],
+//        ],
 
 //        'second' => [
 //            'username'  => 'MySecondBot',
 //            'token' => '123456:abc',
 //        ],
-    ],
+//    ],
+    'bot_token' => env('TELEGRAM_BOT_TOKEN', 'YOUR-BOT-TOKEN'),
 
     /*
     |--------------------------------------------------------------------------
@@ -91,7 +92,7 @@ return [
     | Possible Values: (Boolean) "true" OR "false"
     |
     */
-    'resolve_command_dependencies' => true,
+//    'resolve_command_dependencies' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -110,7 +111,18 @@ return [
     |
     */
     'commands' => [
-        Telegram\Bot\Commands\HelpCommand::class,
+//        Telegram\Bot\Commands\HelpCommand::class,
+        App\Telegram\Commands\StartCommand::class,
+    ],
+
+    'replyAgents' => [
+        App\Telegram\ReplyAgents\MainReplyAgent::class,
+    ],
+
+    'callbackCommands' => [
+    ],
+
+    'states' => [
     ],
 
     /*
@@ -131,7 +143,7 @@ return [
     |
     | Examples shown below are by the group type for you to understand each of them.
     */
-    'command_groups' => [
+//    'command_groups' => [
         /* // Group Type: 1
            'commmon' => [
                 Acme\Project\Commands\TodoCommand::class,
@@ -172,7 +184,7 @@ return [
                 'Acme\Project\Commands\BotCommand' // Full Path to Command Class.
            ],
         */
-    ],
+//    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -190,9 +202,9 @@ return [
     | Think of this as a central storage, to register, reuse and maintain them across all bots.
     |
     */
-    'shared_commands' => [
+//    'shared_commands' => [
         // 'start' => Acme\Project\Commands\StartCommand::class,
         // 'stop' => Acme\Project\Commands\StopCommand::class,
         // 'status' => Acme\Project\Commands\StatusCommand::class,
-    ],
+//    ],
 ];
