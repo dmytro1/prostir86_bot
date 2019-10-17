@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Telegram\Core\CallbackCommandBus;
+use App\Telegram\Core\PaymentsHandler;
 use App\Telegram\Core\ReplyAgentsSupervisor;
 use Telegram\Bot\Api;
 
@@ -65,6 +66,18 @@ class BotController extends Controller
     {
         $update = $telegram->commandsHandler(true);
 
+        if ($update->shippingQuery) {
+            /** @var PaymentsHandler $payment */
+            $payment = app(PaymentsHandler::class);
+            $payment->handleShippingQuery($update);
+        }
+
+        if ($update->preCheckoutQuery) {
+            /** @var PaymentsHandler $payment */
+            $payment = app(PaymentsHandler::class);
+            $payment->handlePreCheckoutQuery($update);
+        }
+
         if ($callbackQuery = $update->callbackQuery) {
 
             /** @var CallbackCommandBus $bus */
@@ -77,10 +90,18 @@ class BotController extends Controller
         if ($update->message) {
             $text = $update->message->text;
             $location = $update->message->location;
-            if ((strlen($text) > 0 && substr($text, 0, 1) != '/') || (isset($location) && $location->latitude && $location->longitude)) {
+            $phone_number = $update->message->contact->phoneNumber ?? null;
+            if ((strlen($text) > 0 && substr($text, 0, 1) != '/') || (isset($location) && $location->latitude && $location->longitude) || isset($phone_number)) {
                 /** @var ReplyAgentsSupervisor $supervisor */
                 $supervisor = app(ReplyAgentsSupervisor::class);
                 $supervisor->handle($update);
+            }
+
+            if ($successfulPayment = $update->message->successfulPayment) {
+
+                /** @var PaymentsHandler $payment */
+                $payment = app(PaymentsHandler::class);
+                $payment->handleSuccessfulPayment($update, $successfulPayment);
             }
         }
     }

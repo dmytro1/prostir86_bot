@@ -4,6 +4,7 @@ namespace App\Telegram\ReplyAgents;
 
 use App\User;
 use App\UserMeta;
+use Telegram\Bot\Keyboard\Keyboard;
 
 class EmailReplyAgent extends AbstractReplyAgent
 {
@@ -15,10 +16,10 @@ class EmailReplyAgent extends AbstractReplyAgent
         $chat_id = $this->chat_id;
         $user_id = User::where('chat_id', $chat_id)->value('id');
 
-        $state = config('telegram.states.paymentState');
+        $state = config('telegram.states.phoneState');
 
         /** update state in User model */
-//        User::where('chat_id', $chat_id)->where('state', '!=', $state)->update(['state' => $state]);
+        User::where('chat_id', $chat_id)->where('state', '!=', $state)->update(['state' => $state]);
 
         UserMeta::updateOrCreate(['user_id' => $user_id], ['email' => $message]);
 
@@ -28,20 +29,23 @@ class EmailReplyAgent extends AbstractReplyAgent
         ]);
 
         $this->replyWithMessage([
-            'text' => 'Перевірте дані перед оплатою.',
-            'parse_mode' => 'html',
+            'text' => 'Відправте Ваш телефон:',
+            'reply_markup' => $this->prepare_phone_keyboard(),
         ]);
 
-        $user_meta = UserMeta::where('user_id', $user_id)->first();
+    }
 
-        $reply = 'Ім\'я: ' . $user_meta->name . PHP_EOL;
-        $reply .= 'Прізвище: ' . $user_meta->surname . PHP_EOL;
-        $reply .= 'E-mail: ' . $user_meta->email . PHP_EOL;
+    public function prepare_phone_keyboard()
+    {
+        $keyboard = Keyboard::make(['resize_keyboard' => true]);
 
-        $this->replyWithMessage([
-            'text' => $reply,
-            'parse_mode' => 'html',
+        $button1 = Keyboard::button([
+            'text' => 'Ваш телефон',
+            'request_contact' => true,
         ]);
 
+        $keyboard->row($button1);
+
+        return $keyboard;
     }
 }

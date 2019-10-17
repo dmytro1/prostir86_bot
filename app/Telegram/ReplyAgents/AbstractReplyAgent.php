@@ -28,6 +28,8 @@ abstract class AbstractReplyAgent
 
     protected $location;
 
+    protected $phone_number;
+
     protected $user_id;
 
     public function __construct(Api $telegram)
@@ -48,6 +50,7 @@ abstract class AbstractReplyAgent
         $this->chat_id = $update->message->from->id;
         $this->first_name = $update->message->from->firstName;
         $this->location = $update->message->location;
+        $this->phone_number = $update->message->contact->phoneNumber ?? null;
 
 //        $this->user_id = User::where('chat_id', $this->chat_id)->value('id');
     }

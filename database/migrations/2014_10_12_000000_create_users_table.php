@@ -20,7 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('address')->nullable();
-            $table->integer('phone_number')->default(0);
+            $table->bigInteger('phone_number')->default(0);
 //            $table->string('user_locale')->default(app()->getLocale());
             $table->string('state')->nullable();
             $table->timestamps();

@@ -14,6 +14,8 @@ use Telegram\Bot\Objects\Payments\LabeledPrice;
 
 class InvoiceReply extends AbstractReplyAgent
 {
+    protected $name = 'payment';
+
     public function handle()
     {
         $state = config('telegram.states.invoiceState');

@@ -8,7 +8,9 @@
 
 namespace App\Telegram\Core;
 
+use App\Telegram\Commands\StartCommand;
 use App\Telegram\ReplyAgents\LocationReplyAgent;
+use App\User;
 use Telegram\Bot\Api;
 use Telegram\Bot\Objects\Payments\SuccessfulPayment;
 use Telegram\Bot\Objects\Update;
@@ -51,6 +53,17 @@ class PaymentsHandler
             'text' => LocationReplyAgent::print_response_string($successfulPayment),
             'parse_mode' => 'html',
         ]);
+        $this->telegram->sendMessage([
+            'chat_id' => $update->message->chat->id,
+            'text' => 'Оплата пройшла успішно',
+            'reply_markup' => StartCommand::prepare_start_keyboard(),
+        ]);
+
+        $state = config('telegram.states.startState');
+
+        /** update state in User model */
+        User::where('chat_id', $update->message->chat->id)->where('state', '!=', $state)->update(['state' => $state]);
+
     }
 
     public function prepare_shipping_options()

@@ -120,9 +120,12 @@ return [
         App\Telegram\ReplyAgents\NameReplyAgent::class,
         App\Telegram\ReplyAgents\SurnameReplyAgent::class,
         App\Telegram\ReplyAgents\EmailReplyAgent::class,
+        App\Telegram\ReplyAgents\PhoneReplyAgent::class,
+        App\Telegram\ReplyAgents\Main\InvoiceReply::class,
     ],
 
     'callbackCommands' => [
+        App\Telegram\CallbackCommands\InvoiceCallbackCommand::class,
     ],
 
     'states' => [
@@ -130,6 +133,7 @@ return [
         'nameState' => 'name',
         'surnameState' => 'surname',
         'emailState' => 'email',
+        'phoneState' => 'phone',
         'paymentState' => 'payment',
     ],
 

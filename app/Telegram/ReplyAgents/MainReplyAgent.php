@@ -32,6 +32,10 @@ class MainReplyAgent extends AbstractReplyAgent
             $this->replyWithMessage([
                 'text' => __('telegram.start2'),
             ]);
+        } else {
+            $reply = new DefaultReplyAgent($this->telegram);
+            $reply->setUpdate($this->update);
+            $reply->handle();
         }
 //            $reply = new SettingsReply($this->telegram);
 //        } elseif (strpos($message, __('telegram.start_keyboard.inline')) === 0) {
