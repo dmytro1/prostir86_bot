@@ -5,11 +5,6 @@ return [
     'start' => 'Привіт, :firstName! Ласкаво просимо до Prostir86 bot! Виберіть івент на який можна зареєструватися.',
     'start2' => 'Введіть своє ім\'я і відправте нам:' ,
 
-    'events' => [
-      'event1' => 'Fashion week 2019',
-      'event2' => 'Design week 2020',
-    ],
-
     'start_keyboard' => [
         'shop' => 'Store',
         'invoice' => 'Invoice',

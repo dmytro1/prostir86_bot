@@ -70,16 +70,14 @@ class StartCommand extends Command
     {
         $keyboard = Keyboard::make(['resize_keyboard' => true]);
 
-        $event1 = Keyboard::button([
-            'text' => __('telegram.events.event1'),
-        ]);
+        $events = App\Event::all();
 
-        $event2 = Keyboard::button([
-            'text' => __('telegram.events.event2'),
-        ]);
-
-        $keyboard->row($event1);
-        $keyboard->row($event2);
+        foreach ($events as $event) {
+            $event_btn = Keyboard::button([
+                'text' => $event->title,
+            ]);
+            $keyboard->row($event_btn);
+        }
 
         return $keyboard;
     }
