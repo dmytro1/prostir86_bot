@@ -52,7 +52,7 @@ abstract class AbstractReplyAgent
         $this->location = $update->message->location;
         $this->phone_number = $update->message->contact->phoneNumber ?? null;
 
-//        $this->user_id = User::where('chat_id', $this->chat_id)->value('id');
+        $this->user_id = User::where('chat_id', $this->chat_id)->value('id');
     }
 
     abstract public function handle();

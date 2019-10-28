@@ -63,7 +63,12 @@ class PhoneReplyAgent extends AbstractReplyAgent
             'text' => 'Перейти до оплати',
         ]);
 
+        $button2 = Keyboard::button([
+            'text' => 'Ввести нові дані',
+        ]);
+
         $keyboard->row($button1);
+        $keyboard->row($button2);
 
         return $keyboard;
     }

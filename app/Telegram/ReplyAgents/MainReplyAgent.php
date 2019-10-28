@@ -2,16 +2,8 @@
 
 namespace App\Telegram\ReplyAgents;
 
-//use App\Telegram\ReplyAgents\Main\ContactReply;
-//use App\Telegram\ReplyAgents\Main\InlineReply;
-//use App\Telegram\ReplyAgents\Main\InstantReply;
-//use App\Telegram\ReplyAgents\Main\InvoiceReply;
-//use App\Telegram\ReplyAgents\Main\LocationReply;
-//use App\Telegram\ReplyAgents\Main\LoginReply;
-//use App\Telegram\ReplyAgents\Main\SettingsReply;
-//use App\Telegram\ReplyAgents\Main\ShopReply;
-//use App\Telegram\ReplyAgents\Main\UsersList;
-
+use App\Event;
+use App\Order;
 use App\User;
 
 class MainReplyAgent extends AbstractReplyAgent
@@ -22,43 +14,42 @@ class MainReplyAgent extends AbstractReplyAgent
     {
         $message = $this->message;
 
-        if (strpos($message, __('telegram.events.event1')) === 0) {
+        $eventsCollection = Event::all();
+        $events = [];
+
+        foreach ($eventsCollection as $event) {
+            $events[] = ['id' => $event->id, 'title' => $event->title];
+        }
+
+        if (strpos($message, $events[0]['title']) === 0) {
+
+            $event_id = $events['0']['id'];
 
             $state = config('telegram.states.nameState');
 
             /** update state in User model */
             User::where('chat_id', $this->chat_id)->where('state', '!=', $state)->update(['state' => $state]);
 
+            Order::create([
+                'user_id' => $this->user_id,
+                'event_id' => $event_id,
+                'status' => 'created'
+            ]);
+
             $this->replyWithMessage([
                 'text' => __('telegram.start2'),
             ]);
+
+        } elseif (strpos($message, $events[0]['title']) === 0) {
+
+            $this->replyWithMessage([
+                'text' => 'Event 2',
+            ]);
+
         } else {
             $reply = new DefaultReplyAgent($this->telegram);
             $reply->setUpdate($this->update);
             $reply->handle();
         }
-//            $reply = new SettingsReply($this->telegram);
-//        } elseif (strpos($message, __('telegram.start_keyboard.inline')) === 0) {
-//            $reply = new InlineReply($this->telegram);
-//        } elseif (strpos($message, __('telegram.start_keyboard.invoice')) === 0) {
-//            $reply = new InvoiceReply($this->telegram);
-//        } elseif (strpos($message, __('telegram.start_keyboard.location')) === 0) {
-//            $reply = new LocationReply($this->telegram);
-//        } elseif (strpos($message, __('telegram.start_keyboard.shop')) === 0) {
-//            $reply = new ShopReply($this->telegram);
-//        } elseif (strpos($message, __('telegram.start_keyboard.contact')) === 0) {
-//            $reply = new ContactReply($this->telegram);
-//        } elseif (strpos($message, __('telegram.start_keyboard.instant')) === 0) {
-//            $reply = new InstantReply($this->telegram);
-//        } elseif (strpos($message, __('telegram.start_keyboard.login')) === 0) {
-//            $reply = new LoginReply($this->telegram);
-//        } elseif (strpos($message, __('telegram.start_keyboard.users_list')) === 0 && $this->chat_id == 76852895) {
-//            $reply = new UsersList($this->telegram);
-//        } else {
-//            $reply = new DefaultReplyAgent($this->telegram);
-//        }
-//
-//        $this->setUpdate($this->update);
-//        $this->handle();
     }
 }

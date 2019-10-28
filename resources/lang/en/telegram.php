@@ -3,7 +3,7 @@
 return [
 
     'start' => 'Привіт, :firstName! Ласкаво просимо до Prostir86 bot! Виберіть івент на який можна зареєструватися.',
-    'start2' => 'Введіть своє ім\'я і відправте нам:' ,
+    'start2' => 'Введіть своє ім\'я і відправте нам:',
 
     'start_keyboard' => [
         'shop' => 'Store',
@@ -52,9 +52,9 @@ return [
     ],
 
     'product' => [
-        'name' => 'Sand payment',
-        'description' => 'Here you could test payments for goods and services from users.',
-        'label' => 'Some product/service',
+        'name' => 'Кошик',
+        'description' => 'Ви хочете оплатити 1 квиток на Design week 2019',
+        'label' => '1 квиток на Design week 2019',
     ],
 
     'location' => [

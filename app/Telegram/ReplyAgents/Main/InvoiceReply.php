@@ -8,8 +8,9 @@
 
 namespace App\Telegram\ReplyAgents\Main;
 
-use App\Telegram\CallbackCommands\InvoiceCallbackCommand;
+use App\Order;
 use App\Telegram\ReplyAgents\AbstractReplyAgent;
+use App\Telegram\ReplyAgents\DefaultReplyAgent;
 use Telegram\Bot\Objects\Payments\LabeledPrice;
 
 class InvoiceReply extends AbstractReplyAgent
@@ -18,12 +19,25 @@ class InvoiceReply extends AbstractReplyAgent
 
     public function handle()
     {
-        $state = config('telegram.states.invoiceState');
+        $message = $this->message;
 
-        /** update state in User model */
-        //User::where('chat_id', $chat_id)->where('state', '!=', $state)->update(['state' => $state]);
+        if (strpos($message, 'Перейти до оплати') === 0) {
+            $state = config('telegram.states.invoiceState');
 
-        $this->replyWithInvoice(self::prepareParams());
+            /** update state in User model */
+            //User::where('chat_id', $chat_id)->where('state', '!=', $state)->update(['state' => $state]);
+
+            Order::where('user_id', $this->user_id)
+                ->where('status', 'created')
+                ->update(['status' => 'pending_payment']);
+
+            $this->replyWithInvoice(self::prepareParams());
+
+        } else {
+            $reply = new DefaultReplyAgent($this->telegram);
+            $reply->setUpdate($this->update);
+            $reply->handle();
+        }
     }
 
     public static function prepareParams()
@@ -35,16 +49,16 @@ class InvoiceReply extends AbstractReplyAgent
             'provider_token' => '632593626:TEST:i56982357197',
             'start_parameter' => 'invoice_123123',
             'currency' => 'usd',
-            'prices' => [new LabeledPrice(['amount' => 10, 'label' => __('telegram.product.label')])],
-            'photo_url' => 'https://www.leehealthwellbeing.com.au/wp-content/uploads/2016/02/graphic_product_tangible.png',
+            'prices' => [new LabeledPrice(['amount' => 12099, 'label' => __('telegram.product.label')])],
+            'photo_url' => 'https://prostir86.com/wp-content/uploads/2019/10/72471166_3571177489562661_3507589143695720448_n.jpg',
             'photo_width' => 90,
             'photo_height' => 50,
-            //'need_name' => true,
-            //'need_phone_number' => true,
-            //'need_email' => true,
+            'need_name' => true,
+            'need_phone_number' => true,
+            'need_email' => true,
             //'need_shipping_address' => true,
-            'is_flexible' => true,
-            'reply_markup' => InvoiceCallbackCommand::prepare_invoice_keyboard(),
+//            'is_flexible' => true,
+//            'reply_markup' => InvoiceCallbackCommand::prepare_invoice_keyboard(),
 
         ];
     }

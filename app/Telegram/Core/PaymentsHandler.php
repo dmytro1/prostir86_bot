@@ -8,14 +8,14 @@
 
 namespace App\Telegram\Core;
 
+use App\Order;
 use App\Telegram\Commands\StartCommand;
 use App\Telegram\ReplyAgents\LocationReplyAgent;
+use App\Transaction;
 use App\User;
 use Telegram\Bot\Api;
 use Telegram\Bot\Objects\Payments\SuccessfulPayment;
 use Telegram\Bot\Objects\Update;
-use Telegram\Bot\Objects\Payments\LabeledPrice;
-use Telegram\Bot\Objects\Payments\ShippingOption;
 
 class PaymentsHandler
 {
@@ -27,29 +27,50 @@ class PaymentsHandler
         $this->telegram = $telegram;
     }
 
-    public function handleShippingQuery(Update $update)
-    {
-        $this->telegram->answerShippingQuery([
-            'shipping_query_id' => $update->shippingQuery->id,
-            'ok' => true,
-            'shipping_options' => $this->prepare_shipping_options(),
-            'error_message' => 'Shipin error',
-        ]);
-    }
-
     public function handlePreCheckoutQuery(Update $update)
     {
+
+        // Update status in Orders
+        $user_id = User::where('chat_id', $update->preCheckoutQuery->from->id)->value('id');
+        Order::where('user_id', $user_id)
+            ->where('status', 'pending_payment')
+            ->update(['status' => 'pending_payment_pre']);
+
+        /* Check if everything with OK with checkout and shipping */
+        $result = 'if everything is true' ? true : false;
+
         $this->telegram->answerPreCheckoutQuery([
             'pre_checkout_query_id' => $update->preCheckoutQuery->id,
-            'ok' => true,
+            'ok' => $result,
             'error_message' => 'Precheckout error',
         ]);
     }
 
     public function handleSuccessfulPayment(Update $update, SuccessfulPayment $successfulPayment)
     {
+        $chat_id = $update->message->chat->id;
+
+        // Update status in Orders
+        $user_id = User::where('chat_id', $chat_id)->value('id');
+        Order::where('user_id', $user_id)
+            ->where('status', 'pending_payment_pre')
+            ->update(['status' => 'completed']);
+
+        // Update Transaction
+        $order_id = Order::where('status', 'completed')
+            ->where('user_id', $user_id)
+            ->value('id');
+
+        Transaction::create(['user_id' => $user_id, 'order_id' => $order_id, 'status' => 'successful']);
+
+        /** update state in User model */
+        $state = config('telegram.states.startState');
+        User::where('chat_id', $chat_id)
+            ->where('state', '!=', $state)
+            ->update(['state' => $state]);
+
         $this->telegram->sendMessage([
-            'chat_id' => $update->message->chat->id,
+            'chat_id' => $chat_id,
             'text' => LocationReplyAgent::print_response_string($successfulPayment),
             'parse_mode' => 'html',
         ]);
@@ -59,34 +80,5 @@ class PaymentsHandler
             'reply_markup' => StartCommand::prepare_start_keyboard(),
         ]);
 
-        $state = config('telegram.states.startState');
-
-        /** update state in User model */
-        User::where('chat_id', $update->message->chat->id)->where('state', '!=', $state)->update(['state' => $state]);
-
-    }
-
-    public function prepare_shipping_options()
-    {
-        $shipping_options = [
-            new ShippingOption([
-                'id' => 'nova_poshta',
-                'title' => 'Nova Poshta',
-                'prices' => [
-                    new LabeledPrice(['amount' => 15, 'label' => 'Delivery (NP)']),
-                    new LabeledPrice(['amount' => 2, 'label' => 'Registration (NP)']),
-                ],
-            ]),
-            new ShippingOption([
-                'id' => 'dhl',
-                'title' => 'DHL Express',
-                'prices' => [
-                    new LabeledPrice(['amount' => 20, 'label' => 'Delivery (DHL)']),
-                    new LabeledPrice(['amount' => 0, 'label' => 'Registration (DHL)']),
-                ],
-            ]),
-        ];
-
-        return json_encode($shipping_options);
     }
 }

@@ -66,12 +66,6 @@ class BotController extends Controller
     {
         $update = $telegram->commandsHandler(true);
 
-        if ($update->shippingQuery) {
-            /** @var PaymentsHandler $payment */
-            $payment = app(PaymentsHandler::class);
-            $payment->handleShippingQuery($update);
-        }
-
         if ($update->preCheckoutQuery) {
             /** @var PaymentsHandler $payment */
             $payment = app(PaymentsHandler::class);
