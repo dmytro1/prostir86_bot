@@ -14,7 +14,7 @@ class EmailReplyAgent extends AbstractReplyAgent
     {
         $message = $this->message;
         $chat_id = $this->chat_id;
-        $user_id = User::where('chat_id', $chat_id)->value('id');
+        $user_id = $this->user_id;
 
         $state = config('telegram.states.phoneState');
 

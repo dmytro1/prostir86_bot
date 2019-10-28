@@ -117,6 +117,7 @@ return [
 
     'replyAgents' => [
         App\Telegram\ReplyAgents\MainReplyAgent::class,
+        App\Telegram\ReplyAgents\QuantityReplyAgent::class,
         App\Telegram\ReplyAgents\NameReplyAgent::class,
         App\Telegram\ReplyAgents\SurnameReplyAgent::class,
         App\Telegram\ReplyAgents\EmailReplyAgent::class,
@@ -130,6 +131,7 @@ return [
 
     'states' => [
         'startState' => 'start',
+        'quantityState' => 'quantity',
         'nameState' => 'name',
         'surnameState' => 'surname',
         'emailState' => 'email',

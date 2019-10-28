@@ -54,14 +54,15 @@ class PaymentsHandler
         $user_id = User::where('chat_id', $chat_id)->value('id');
         Order::where('user_id', $user_id)
             ->where('status', 'pending_payment_pre')
+            ->latest()->first()
             ->update(['status' => 'completed']);
 
         // Update Transaction
-        $order_id = Order::where('status', 'completed')
-            ->where('user_id', $user_id)
-            ->value('id');
+        $order = Order::where('user_id', $user_id)
+            ->where('status', 'completed')
+            ->latest()->first();
 
-        Transaction::create(['user_id' => $user_id, 'order_id' => $order_id, 'status' => 'successful']);
+        Transaction::create(['user_id' => $user_id, 'order_id' => $order->id, 'status' => 'successful']);
 
         /** update state in User model */
         $state = config('telegram.states.startState');

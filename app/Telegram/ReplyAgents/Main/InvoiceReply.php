@@ -27,9 +27,13 @@ class InvoiceReply extends AbstractReplyAgent
             /** update state in User model */
             //User::where('chat_id', $chat_id)->where('state', '!=', $state)->update(['state' => $state]);
 
-            Order::where('user_id', $this->user_id)
+            $order = Order::where('user_id', $this->user_id)
                 ->where('status', 'created')
-                ->update(['status' => 'pending_payment']);
+                ->latest()->first();
+
+            if ($order) {
+                $order->update(['status' => 'pending_payment']);
+            }
 
             $this->replyWithInvoice(self::prepareParams());
 
