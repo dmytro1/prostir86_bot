@@ -17,6 +17,8 @@ class CreateOrdersTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->integer('event_id')->unsigned();
+            $table->float('price', 5, 2)->nullable();
+            $table->integer('quantity')->nullable();
             $table->string('status')->default('created');
             $table->timestamps();
         });
