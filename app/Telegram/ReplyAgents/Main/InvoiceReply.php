@@ -63,7 +63,10 @@ class InvoiceReply extends AbstractReplyAgent
             'provider_token' => '632593626:TEST:i56982357197',
             'start_parameter' => 'invoice_123123',
             'currency' => 'usd',
-            'prices' => [new LabeledPrice(['amount' => $event_price * $quantity * 100, 'label' => $quantity . ' квитки на ' . $event_title])],
+            'prices' => [new LabeledPrice([
+                'amount' => round($event_price * $quantity * 100),
+                'label' => $quantity . ' квитки на ' . $event_title
+            ])],
             'photo_url' => $event_banner,
             'photo_width' => 90,
             'photo_height' => 50,

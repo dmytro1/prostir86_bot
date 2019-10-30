@@ -58,10 +58,13 @@ class PaymentsHandler
 
         // Update status in Orders
         $user_id = User::where('chat_id', $chat_id)->value('id');
-        Order::where('user_id', $user_id)
+        $update_order = Order::where('user_id', $user_id)
             ->where('status', 'pending_payment_pre')
-            ->latest()->first()
-            ->update(['status' => 'completed']);
+            ->latest()->first();
+
+        if (!is_null($update_order)) {
+            $update_order->update(['status' => 'completed']);
+        }
 
         // Update Transaction
         $order = Order::where('user_id', $user_id)
