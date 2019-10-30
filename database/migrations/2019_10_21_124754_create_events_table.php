@@ -18,6 +18,7 @@ class CreateEventsTable extends Migration
             $table->string('title');
             $table->string('description');
             $table->float('price', 5, 2);
+            $table->string('banner_url');
             $table->timestamps();
         });
     }

@@ -42,10 +42,24 @@ class MainReplyAgent extends AbstractReplyAgent
                 'reply_markup' => $this->prepare_qty_keyboard()
             ]);
 
-        } elseif (strpos($message, $events[0]['title']) === 0) {
+        } elseif (strpos($message, $events[1]['title']) === 0) {
+
+            $event_id = $events['1']['id'];
+
+            $state = config('telegram.states.quantityState');
+
+            /** update state in User model */
+            User::where('chat_id', $this->chat_id)->where('state', '!=', $state)->update(['state' => $state]);
+
+            Order::create([
+                'user_id' => $this->user_id,
+                'event_id' => $event_id,
+                'status' => 'created'
+            ]);
 
             $this->replyWithMessage([
-                'text' => 'Event 2',
+                'text' => __('telegram.start2'),
+                'reply_markup' => $this->prepare_qty_keyboard()
             ]);
 
         } else {

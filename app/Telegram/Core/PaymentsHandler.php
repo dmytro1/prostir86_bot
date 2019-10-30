@@ -9,6 +9,7 @@
 namespace App\Telegram\Core;
 
 use App\Order;
+use App\OrderDetail;
 use App\Telegram\Commands\StartCommand;
 use App\Telegram\ReplyAgents\LocationReplyAgent;
 use App\Transaction;
@@ -34,6 +35,7 @@ class PaymentsHandler
         $user_id = User::where('chat_id', $update->preCheckoutQuery->from->id)->value('id');
         Order::where('user_id', $user_id)
             ->where('status', 'pending_payment')
+            ->latest()->first()
             ->update(['status' => 'pending_payment_pre']);
 
         /* Check if everything with OK with checkout and shipping */
@@ -49,6 +51,10 @@ class PaymentsHandler
     public function handleSuccessfulPayment(Update $update, SuccessfulPayment $successfulPayment)
     {
         $chat_id = $update->message->chat->id;
+        $orderInfo = $successfulPayment->orderInfo;
+
+        // In currency
+        $total_amount = $successfulPayment->totalAmount / 100;
 
         // Update status in Orders
         $user_id = User::where('chat_id', $chat_id)->value('id');
@@ -62,7 +68,19 @@ class PaymentsHandler
             ->where('status', 'completed')
             ->latest()->first();
 
-        Transaction::create(['user_id' => $user_id, 'order_id' => $order->id, 'status' => 'successful']);
+        Transaction::create([
+            'user_id' => $user_id,
+            'order_id' => $order->id,
+            'status' => 'successful',
+            'total_amount' => $total_amount
+        ]);
+
+        OrderDetail::create([
+            'order_id' => $order->id,
+            'name' => $orderInfo->name,
+            'phone_number' => $orderInfo->phoneNumber,
+            'email' => $orderInfo->email
+        ]);
 
         /** update state in User model */
         $state = config('telegram.states.startState');

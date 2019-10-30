@@ -18,6 +18,7 @@ class CreateTransactionsTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->integer('order_id')->unsigned();
             $table->text('status');
+            $table->float('price', 5, 2);
             $table->timestamps();
         });
 
