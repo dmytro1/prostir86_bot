@@ -35,7 +35,7 @@ class PaymentsHandler
         $user_id = User::where('chat_id', $update->preCheckoutQuery->from->id)->value('id');
         Order::where('user_id', $user_id)
             ->where('status', 'pending_payment')
-            ->latest()->first()
+            ->latest('updated_at')->first()
             ->update(['status' => 'pending_payment_pre']);
 
         /* Check if everything with OK with checkout and shipping */
@@ -60,7 +60,7 @@ class PaymentsHandler
         $user_id = User::where('chat_id', $chat_id)->value('id');
         $update_order = Order::where('user_id', $user_id)
             ->where('status', 'pending_payment_pre')
-            ->latest()->first();
+            ->latest('updated_at')->first();
 
         if (!is_null($update_order)) {
             $update_order->update(['status' => 'completed']);
@@ -69,7 +69,7 @@ class PaymentsHandler
         // Update Transaction
         $order = Order::where('user_id', $user_id)
             ->where('status', 'completed')
-            ->latest()->first();
+            ->latest('updated_at')->first();
 
         Transaction::create([
             'user_id' => $user_id,

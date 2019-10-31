@@ -30,7 +30,7 @@ class InvoiceReply extends AbstractReplyAgent
 
             $updated_order = Order::where('user_id', $this->user_id)
                 ->where('status', 'created')
-                ->latest()->first();
+                ->latest('updated_at')->first();
 
             if (!is_null($updated_order)) {
                 $updated_order->update(['status' => 'pending_payment']);
@@ -38,7 +38,7 @@ class InvoiceReply extends AbstractReplyAgent
 
             $order = Order::where('user_id', $this->user_id)
                 ->where('status', 'pending_payment')
-                ->latest()->first();
+                ->latest('updated_at')->first();
 
             $this->replyWithInvoice(self::prepareParams($order));
 
