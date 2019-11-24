@@ -32,6 +32,7 @@ class QuantityReplyAgent extends AbstractReplyAgent
             ])->latest('updated_at')->first();
 
             $event_price = Event::find($current_order->event_id)->price;
+            $event_title = Event::find($current_order->event_id)->title;
 
             Order::find($current_order->id)
                 ->update([
@@ -40,14 +41,13 @@ class QuantityReplyAgent extends AbstractReplyAgent
                 ]);
 
             $this->replyWithMessage([
-                'text' => 'Ви вибрали: <b>' . $ticket_qty . '</b> квитків',
-                'reply_markup' => Keyboard::remove(['remove_keyboard' => true]),
+                'text' => 'Ви вибрали:' . PHP_EOL . '<b>' . $ticket_qty . '</b> квитків на ' . $event_title,
                 'parse_mode' => 'html',
             ]);
 
             $this->replyWithMessage([
 //                'text' => 'Введіть Ваше ім\'я:',
-                'text' => 'Переходим до оплати. Сформується інвойс, заповніть дані відвідувача івенту коректно',
+                'text' => 'Перевірте вибрані дані. Наступним кроком введіть платіжні дані та особисту інформацію учасника',
                 'parse_mode' => 'html',
                 'reply_markup' => $this->prepare_invoice_button(),
             ]);
@@ -69,7 +69,7 @@ class QuantityReplyAgent extends AbstractReplyAgent
         ]);
 
         $button2 = Keyboard::button([
-            'text' => 'Ввести нові дані',
+            'text' => 'Відмінити замовлення',
         ]);
 
         $keyboard->row($button1);

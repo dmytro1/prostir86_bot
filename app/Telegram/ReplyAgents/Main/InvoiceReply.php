@@ -10,8 +10,10 @@ namespace App\Telegram\ReplyAgents\Main;
 
 use App\Event;
 use App\Order;
+use App\Telegram\Commands\StartCommand;
 use App\Telegram\ReplyAgents\AbstractReplyAgent;
 use App\Telegram\ReplyAgents\DefaultReplyAgent;
+use App\User;
 use Telegram\Bot\Objects\Payments\LabeledPrice;
 
 class InvoiceReply extends AbstractReplyAgent
@@ -42,6 +44,23 @@ class InvoiceReply extends AbstractReplyAgent
 
             $this->replyWithInvoice(self::prepareParams($order));
 
+        } elseif (strpos($message, 'Відмінити замовлення') === 0) {
+            $state = config('telegram.states.startState');
+
+            /** update state in User model */
+            User::where('chat_id', $this->chat_id)
+                ->where('state', '!=', $state)
+                ->update(['state' => $state]);
+
+            Order::where('user_id', $this->user_id)
+                ->whereIn('status', ['created', 'pending_payment'])
+                ->latest('updated_at')->first()->delete();
+
+            $this->replyWithMessage([
+                'text' => 'Замовлення відмінено' . PHP_EOL . 'Виберіть повторно:',
+                'reply_markup' => StartCommand::prepare_start_keyboard(),
+            ]);
+
         } else {
             $reply = new DefaultReplyAgent($this->telegram);
             $reply->setUpdate($this->update);
@@ -60,9 +79,10 @@ class InvoiceReply extends AbstractReplyAgent
             'title' => __('telegram.product.name'),
             'description' => 'Ви хочете оплатити ' . $quantity . ' квитки на ' . $event_title,
             'payload' => 'invoice123123',
-            'provider_token' => '632593626:TEST:i56982357197',
+            'provider_token' => '632593626:TEST:i56982357197', // test
+//            'provider_token' => '635983722:LIVE:i37577844625', // live
             'start_parameter' => 'invoice_123123',
-            'currency' => 'usd',
+            'currency' => 'uah',
             'prices' => [new LabeledPrice([
                 'amount' => round($event_price * $quantity * 100),
                 'label' => $quantity . ' квитки на ' . $event_title
