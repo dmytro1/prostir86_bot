@@ -28,7 +28,7 @@ class NameReplyAgent extends AbstractReplyAgent
         ]);
 
         $this->replyWithMessage([
-            'text' => 'Введіть Ваше прізвище:',
+            'text' => '📃 Введіть Ваше прізвище:',
             'parse_mode' => 'html',
         ]);
     }

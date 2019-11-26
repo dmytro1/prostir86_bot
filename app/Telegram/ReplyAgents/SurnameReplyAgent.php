@@ -28,7 +28,7 @@ class SurnameReplyAgent extends AbstractReplyAgent
         ]);
 
         $this->replyWithMessage([
-            'text' => 'Введіть Ваш e-mail:',
+            'text' => '📧 Введіть Ваш e-mail:',
             'parse_mode' => 'html',
         ]);
     }

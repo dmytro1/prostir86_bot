@@ -29,7 +29,7 @@ class EmailReplyAgent extends AbstractReplyAgent
         ]);
 
         $this->replyWithMessage([
-            'text' => 'Відправте Ваш телефон:',
+            'text' => '📱 Відправте Ваш телефон з допомогою клавіши 👇🏻',
             'reply_markup' => $this->prepare_phone_keyboard(),
         ]);
 

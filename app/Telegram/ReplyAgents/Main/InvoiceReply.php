@@ -61,6 +61,27 @@ class InvoiceReply extends AbstractReplyAgent
                 'reply_markup' => StartCommand::prepare_start_keyboard(),
             ]);
 
+        } elseif (strpos($message, 'Підтвердити') === 0) {
+
+            $state = config('telegram.states.startState');
+
+            /** update state in User model */
+            User::where('chat_id', $this->chat_id)->where('state', '!=', $state)->update(['state' => $state]);
+
+            $this->replyWithMessage([
+                'text' => 'Ура! Реєстрація пройшла успішно 🎉',
+                'reply_markup' => StartCommand::prepare_start_keyboard(),
+            ]);
+        } elseif (strpos($message, 'Зареєструватися повторно') === 0) {
+            $state = config('telegram.states.startState');
+
+            /** update state in User model */
+            User::where('chat_id', $this->chat_id)->where('state', '!=', $state)->update(['state' => $state]);
+
+            $this->replyWithMessage([
+                'text' => 'Спробуйте знову',
+                'reply_markup' => StartCommand::prepare_start_keyboard(),
+            ]);
         } else {
             $reply = new DefaultReplyAgent($this->telegram);
             $reply->setUpdate($this->update);
@@ -68,7 +89,8 @@ class InvoiceReply extends AbstractReplyAgent
         }
     }
 
-    public static function prepareParams($order)
+    public
+    static function prepareParams($order)
     {
         $event_price = Event::find($order->event_id)->price;
         $event_title = Event::find($order->event_id)->title;

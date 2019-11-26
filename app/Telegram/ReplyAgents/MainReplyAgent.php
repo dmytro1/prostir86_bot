@@ -30,9 +30,19 @@ class MainReplyAgent extends AbstractReplyAgent
 
         } elseif (strpos($message, $events[1]['title']) === 0) {
 
-            $event_id = $events['1']['id'];
+            $this->replyWithMessage([
+                'text' => 'Цей івент поки не доступний'
+            ]);
 
-            $this->handle_event($event_id);
+//            $event_id = $events['1']['id'];
+//
+//            $this->handle_event($event_id);
+
+        } elseif (strpos($message, $events[2]['title']) === 0) {
+
+            $this->replyWithMessage([
+                'text' => 'Цей івент поки не доступний. Виберіть інший'
+            ]);
 
         } else {
             $reply = new DefaultReplyAgent($this->telegram);
@@ -53,20 +63,29 @@ class MainReplyAgent extends AbstractReplyAgent
                 'text' => 'У вас є незавершене замовлення. Оплатіть його вище.'
             ]);
         } else {
-            $state = config('telegram.states.quantityState');
+            $state = config('telegram.states.nameState');
 
             /** update state in User model */
             User::where('chat_id', $this->chat_id)->where('state', '!=', $state)->update(['state' => $state]);
 
-            Order::create([
-                'user_id' => $this->user_id,
-                'event_id' => $event_id,
-                'status' => 'created'
+//            Order::create([
+//                'user_id' => $this->user_id,
+//                'event_id' => $event_id,
+//                'status' => 'created'
+//            ]);
+
+            $this->replyWithMessage([
+                'text' => 'Круто! Ви вибрали <b>' . $this->message . '</b>',
+                'parse_mode' => 'html'
+            ]);
+
+            $this->replyWithMessage([
+                'text' => __('telegram.start3')
             ]);
 
             $this->replyWithMessage([
                 'text' => __('telegram.start2'),
-                'reply_markup' => $this->prepare_qty_keyboard()
+                'reply_markup' => Keyboard::remove(['keyboard_remove' => true])
             ]);
         }
     }

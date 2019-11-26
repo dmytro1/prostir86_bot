@@ -21,7 +21,7 @@ class QuantityReplyAgent extends AbstractReplyAgent
 
         if (is_numeric($ticket_qty) ?? $ticket_qty < 10) {
 
-            $state = config('telegram.states.paymentState');
+            $state = config('telegram.states.nameState');
 
             /** update state in User model */
             User::where('chat_id', $chat_id)->where('state', '!=', $state)->update(['state' => $state]);

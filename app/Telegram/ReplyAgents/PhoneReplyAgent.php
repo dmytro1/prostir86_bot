@@ -30,16 +30,16 @@ class PhoneReplyAgent extends AbstractReplyAgent
             ]);
 
             $this->replyWithMessage([
-                'text' => 'Перевірте дані перед оплатою.',
+                'text' => 'Перевірте Ваші дані перед підтвердженням',
                 'parse_mode' => 'html',
             ]);
 
             $user_meta = UserMeta::where('user_id', $user_id)->first();
 
-            $reply = 'Ім\'я: ' . $user_meta->name . PHP_EOL;
-            $reply .= 'Прізвище: ' . $user_meta->surname . PHP_EOL;
-            $reply .= 'E-mail: ' . $user_meta->email . PHP_EOL;
-            $reply .= 'Телефон: ' . $phone_number . PHP_EOL;
+            $reply = '📃 Ім\'я: ' . $user_meta->name . PHP_EOL;
+            $reply .= '📃 Прізвище: ' . $user_meta->surname . PHP_EOL;
+            $reply .= '📧 E-mail: ' . $user_meta->email . PHP_EOL;
+            $reply .= '📱 Телефон: ' . $phone_number . PHP_EOL;
 
             $this->replyWithMessage([
                 'text' => $reply,
@@ -60,11 +60,11 @@ class PhoneReplyAgent extends AbstractReplyAgent
         $keyboard = Keyboard::make(['resize_keyboard' => true]);
 
         $button1 = Keyboard::button([
-            'text' => 'Перейти до оплати',
+            'text' => 'Підтвердити ☑️',
         ]);
 
         $button2 = Keyboard::button([
-            'text' => 'Ввести нові дані',
+            'text' => 'Зареєструватися повторно 🔁',
         ]);
 
         $keyboard->row($button1);
