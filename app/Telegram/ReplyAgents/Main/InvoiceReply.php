@@ -13,6 +13,7 @@ use App\Order;
 use App\Telegram\Commands\StartCommand;
 use App\Telegram\ReplyAgents\AbstractReplyAgent;
 use App\Telegram\ReplyAgents\DefaultReplyAgent;
+use App\Telegram\ReplyAgents\PhoneReplyAgent;
 use App\User;
 use Telegram\Bot\Objects\Payments\LabeledPrice;
 
@@ -85,6 +86,7 @@ class InvoiceReply extends AbstractReplyAgent
         } else {
             $reply = new DefaultReplyAgent($this->telegram);
             $reply->setUpdate($this->update);
+            $reply->reply_markup = PhoneReplyAgent::prepare_invoice_button();
             $reply->handle();
         }
     }

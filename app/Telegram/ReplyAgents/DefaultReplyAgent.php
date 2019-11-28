@@ -7,6 +7,7 @@ use App\User;
 class DefaultReplyAgent extends AbstractReplyAgent
 {
     protected $name = 'default';
+    public $reply_markup = '';
 
     public function handle()
     {
@@ -24,6 +25,7 @@ class DefaultReplyAgent extends AbstractReplyAgent
         $this->replyWithMessage([
             'text' => $command,
             'parse_mode' => 'html',
+            'reply_markup' => $this->reply_markup,
         ]);
     }
 }

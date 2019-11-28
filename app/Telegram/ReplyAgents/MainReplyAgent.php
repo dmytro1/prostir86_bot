@@ -4,6 +4,7 @@ namespace App\Telegram\ReplyAgents;
 
 use App\Event;
 use App\Order;
+use App\Telegram\Commands\StartCommand;
 use App\User;
 use Telegram\Bot\Keyboard\Keyboard;
 
@@ -47,6 +48,7 @@ class MainReplyAgent extends AbstractReplyAgent
         } else {
             $reply = new DefaultReplyAgent($this->telegram);
             $reply->setUpdate($this->update);
+            $reply->reply_markup = StartCommand::prepare_start_keyboard();
             $reply->handle();
         }
     }

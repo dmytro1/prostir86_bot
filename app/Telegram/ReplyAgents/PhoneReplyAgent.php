@@ -75,7 +75,7 @@ class PhoneReplyAgent extends AbstractReplyAgent
         }
     }
 
-    public function prepare_invoice_button()
+    public static function prepare_invoice_button()
     {
         $keyboard = Keyboard::make(['resize_keyboard' => true]);
 
