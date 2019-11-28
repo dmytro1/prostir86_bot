@@ -32,7 +32,8 @@ class MainReplyAgent extends AbstractReplyAgent
         } elseif (strpos($message, $events[1]['title']) === 0) {
 
             $this->replyWithMessage([
-                'text' => 'Цей івент поки не доступний'
+                'text' => 'Цей івент поки не доступний',
+                'reply_markup' => StartCommand::prepare_start_keyboard()
             ]);
 
 //            $event_id = $events['1']['id'];
@@ -42,7 +43,8 @@ class MainReplyAgent extends AbstractReplyAgent
         } elseif (strpos($message, $events[2]['title']) === 0) {
 
             $this->replyWithMessage([
-                'text' => 'Цей івент поки не доступний. Виберіть інший'
+                'text' => 'Цей івент поки не доступний. Виберіть інший',
+                'reply_markup' => StartCommand::prepare_start_keyboard()
             ]);
 
         } else {

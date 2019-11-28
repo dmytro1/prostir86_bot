@@ -17,7 +17,7 @@ class DefaultReplyAgent extends AbstractReplyAgent
         $locale = app()->getLocale();
         $state = User::where(['chat_id' => $chat_id])->value('state');
 
-        $command = 'Команда: <b>"' . $message . '"</b> не знайдена 😔' . PHP_EOL . 'Використовуйте кнопки нижче 👇🏻';
+        $command = 'Команда: <b>"' . $message . '"</b> не знайдена 😔' . PHP_EOL . 'Використовуйте кнопки нижче ⚃ 👇🏻';
 //        $default = 'This is default message';
 //        $locale_msg = 'Locale: <b>' . $locale . '</bfgh>';
 //        $state_msg = 'State: <b>' . $state . '</b>';
